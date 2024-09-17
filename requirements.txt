@@ -8,6 +8,8 @@ crispy-bootstrap4
 crispy-bootstrap5 @ git+https://github.com/django-crispy-forms/crispy-bootstrap5.git@1685644492038ed1150cb36a3bcedddb81f66673
 
 distlib
+dj
+dj-database-url
 Django
 django-crispy-forms
 django-email
@@ -30,6 +32,7 @@ pillow
 pipenv
 platformdirs
 psycopg2
+psycopg2-binary
 python-dateutil
 pytz
 requests
@@ -39,6 +42,7 @@ six
 sniffio
 SpeechRecognition
 sqlparse
+typing_extensions
 tzdata
 urllib3
 virtualenv
