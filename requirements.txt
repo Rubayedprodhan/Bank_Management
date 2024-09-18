@@ -8,7 +8,6 @@ crispy-bootstrap4
 crispy-bootstrap5 @ git+https://github.com/django-crispy-forms/crispy-bootstrap5.git@1685644492038ed1150cb36a3bcedddb81f66673
 
 distlib
-dj
 dj-database-url
 Django
 django-crispy-forms
