@@ -79,80 +79,30 @@ class DepositMoneyViews(TransactionCreateMinxin):
         return super().form_valid(form)
     
 
-class WithdrawMoneyViews(TransactionCreateMinxin, FormView):
+
+class WithdrawMoneyViews(TransactionCreateMinxin):
     form_class = WithdrawForm
     title = 'Withdraw Money'
 
     def get_initial(self):
-        initial = {'transaction_type': 'WITHDRAWAL'} 
-        return initial
-
-    def form_valid(self, form):
-        amount = form.cleaned_data.get('amount')
-        user_account = self.request.user.account
-
-     
-        if amount is None or amount <= 0:
-            messages.error(self.request, ' Withdrawal amount must be greater than zero.')
-            return self.form_invalid(form)
-
-     
-        total_bank_balance = UserBankAccount.objects.aggregate(total_balance=Sum('balance'))['total_balance'] or 0
-
+        initial = {'transaction_type' : WITHDRAWAL}
+        return initial 
     
-        if total_bank_balance < amount:
-            messages.error(self.request, 'The bank is currently bankrupt and cannot process your withdrawal.')
-            return self.form_invalid(form)
 
-      
-        if amount > user_account.balance:
-            messages.error(self.request, 'Insufficient funds in your account.')
-            return self.form_invalid(form)
-
-     
-        user_account.balance -= amount
-        user_account.save(update_fields=['balance'])
-
-       
-        self.transaction(
-            account=user_account,
-            amount=-amount,
-            balance_after_transaction=user_account.balance,
-            transaction_type='WITHDRAWAL'  
+    def form_valid(self,form):
+       # if form.is_valid():
+        amount = form.cleaned_data.get('amount')
+        account = self.request.user.account
+        account.balance -=  amount
+        account.save(
+            update_fields = ['balance']
         )
 
-        messages.success(self.request, f"{amount}$ was withdrawn from your account successfully.")
-        sent_transaction_mail(self.request.user, amount, 'Withdrawal Confirmation', 'transactions/Withdrawal_email.html')
-
+        messages.success(self.request, f"{amount}$ was Withdrawal to You account successfully")
+        sent_transaction_mail(self.request.user, amount, 'Withdrawal Massages','transactions/Withdrawal_email.html')
         return super().form_valid(form)
-
-    def form_invalid(self, form):
-        
-        return super().form_invalid(form)
-
-# class WithdrawMoneyViews(TransactionCreateMinxin):
-#     form_class = WithdrawForm
-#     title = 'Withdraw Money'
-
-#     def get_initial(self):
-#         initial = {'transaction_type' : WITHDRAWAL}
-#         return initial 
     
-
-#     def form_valid(self,form):
-#        # if form.is_valid():
-#         amount = form.cleaned_data.get('amount')
-#         account = self.request.user.account
-#         account.balance -=  amount
-#         account.save(
-#             update_fields = ['balance']
-#         )
-
-#         messages.success(self.request, f"{amount}$ was Withdrawal to You account successfully")
-#         sent_transaction_mail(self.request.user, amount, 'Withdrawal Massages','transactions/Withdrawal_email.html')
-#         return super().form_valid(form)
-
-
+    
 class LoanRequestViews(TransactionCreateMinxin):
     form_class = LoanRequestForm
     title = 'Request For Loan'
